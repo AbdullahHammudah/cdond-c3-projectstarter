@@ -138,8 +138,7 @@ jobs:
           name: Install Dependencies
           command: |
             cd ~
-            yum install sudo
-            y
+            yum -y install sudo
             sudo yum update
             sudo yum install tar gzip
       - run:
