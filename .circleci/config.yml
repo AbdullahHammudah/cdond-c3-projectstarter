@@ -185,7 +185,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            apt install tar gzip awscli
+            apk add --no-cache tar gzop awscli
 
       - run:
           name: Configure server
