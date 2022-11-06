@@ -140,7 +140,7 @@ jobs:
             cd ~
             yum -y install sudo
             sudo yum update
-            sudo -y yum install tar gzip
+            sudo yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
