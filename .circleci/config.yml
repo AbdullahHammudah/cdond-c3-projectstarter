@@ -174,7 +174,7 @@ jobs:
       
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11    
+      - image: amazon/aws-cli   
     steps:
       - checkout
       - add_ssh_keys:
@@ -184,14 +184,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
-            apk add --no-cache tar gzip 
-            apk add --no-cache \
-                python3 \
-                py3-pip \
-            && pip3 install --upgrade pip \
-            && pip3 install --no-cache-dir \
-                awscliv2 \
+            yum -y install python3
+            python3 -m pip install --user ansible
+            yum -y install tar gzip
 
       - run:
           name: Configure server
