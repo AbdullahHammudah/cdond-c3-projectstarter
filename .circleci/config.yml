@@ -185,7 +185,13 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
-            apk add --no-cache tar gzip aws-cli
+            apk add --no-cache tar gzip 
+            apk add --no-cache \
+                python3 \
+                py3-pip \
+            && pip3 install --upgrade pip \
+            && pip3 install --no-cache-dir \
+                awscliv2 \
 
       - run:
           name: Configure server
