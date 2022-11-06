@@ -139,6 +139,7 @@ jobs:
           command: |
             cd ~
             yum install sudo
+            y
             sudo yum update
             sudo yum install tar gzip
       - run:
