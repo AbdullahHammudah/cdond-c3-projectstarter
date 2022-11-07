@@ -180,7 +180,8 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-            fingerprints: ["ae:45:8b:a0:18:c6:bb:ac:ea:eb:a1:0b:8b:da:74:ec"] 
+            name: Adding SSH Keys
+            fingerprints: ["2f:1d:3b:b9:14:25:6e:af:8c:bf:ed:07:56:a5:5a:f3"] 
 
       - run:
           name: Install dependencies
