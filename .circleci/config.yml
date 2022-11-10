@@ -107,7 +107,7 @@ jobs:
           name: Scan frontend dependencies
           command: |
             cd frontend
-            sudo npm install npm@latest -g
+            npm install npm@latest -g
             # npm install oauth-sign@^0.9.0
             sudo npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
