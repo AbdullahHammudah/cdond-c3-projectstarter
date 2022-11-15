@@ -178,19 +178,21 @@ jobs:
       
   configure-infrastructure:
     docker:
-      - image: amazon/aws-cli   
+      - image: cimg/python:3.10   
     steps:
       - checkout
+      
+      - run:
+        name: Install dependencies
+        command: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+          python3 -m pip install --user ansible
+          
       - add_ssh_keys:
             name: Adding SSH Keys
             fingerprints: ["2f:1d:3b:b9:14:25:6e:af:8c:bf:ed:07:56:a5:5a:f3"] 
-
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install python3
-            python3 -m pip install ansible
-            yum -y install tar gzip
             
       - attach_workspace:
           at: ~/
