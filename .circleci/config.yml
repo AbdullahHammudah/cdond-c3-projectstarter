@@ -163,7 +163,6 @@ jobs:
               --stack-name "udacityproj3-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udacityproj3-backend
-            aws cloudformation describe-stack-events --stack-name "udacityproj3-backend-${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Ensure front-end infrastructure exist
           command: |
