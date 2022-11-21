@@ -293,6 +293,60 @@ jobs:
 
       - destroy-environment
       - revert-migrations
+      
+  deploy-backend:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - checkout
+      - install_nodejs
+      - run:
+          name: Install awscli & ansible
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+            python3 -m pip install --user ansible
+            
+      - restore_cache:
+          keys: [backend-build]
+          
+      - add_ssh_keys:
+          name: Adding SSH Keys
+          fingerprints: ["2f:1d:3b:b9:14:25:6e:af:8c:bf:ed:07:56:a5:5a:f3"] 
+          
+      - attach_workspace:
+          at: ~/
+          
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+            
+      - run:
+          name: Package Backend
+          command: |
+            cd backend
+            npm run build
+            tar -czf artifact.tar.gz dist/* package*
+
+            cd ..
+            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            
+      - run:
+          name: Deploy backend
+          command: |
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
+
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+            
+      - destroy-environment
+      - revert-migrations
 
 
 workflows:
@@ -315,4 +369,6 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
           requires: [run-migrations]
