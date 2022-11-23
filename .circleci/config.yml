@@ -415,8 +415,8 @@ jobs:
             export OldWorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
-            echo $OldWorkflowID >> ~/OldWorkflowID.txt
-            cat ~/OldWorkflowID.txt
+            echo $OldWorkflowID >> .circleci/ansible/OldWorkflowID.txt
+            cat .circleci/ansible/OldWorkflowID.txt
             
             
             aws cloudformation deploy \
@@ -430,7 +430,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - ~/OldWorkflowID.txt
+            - project/.circleci/ansible/OldWorkflowID.txt
 
   cleanup:
       docker:
