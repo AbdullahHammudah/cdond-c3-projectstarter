@@ -432,42 +432,42 @@ jobs:
           paths:
             - project/.circleci/ansible/OldWorkflowID.txt
 
-  cleanup:
-      docker:
-      - image: cimg/python:3.10
-      steps:
-      - checkout
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install awscli 
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install  
+#   cleanup:
+#       docker:
+#       - image: cimg/python:3.10
+#       steps:
+#       - checkout
+#       - attach_workspace:
+#           at: ~/
+#       - run:
+#           name: Install awscli 
+#           command: |
+#             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+#             unzip awscliv2.zip
+#             sudo ./aws/install  
             
-      - run:
-          name: Get old stack workflow id
-          command: |
-            cd .circleci/ansible
-            cat OldWorkflowID.txt
-            OldWorkflowID=$(cat OldWorkflowID.txt)
-            echo OldWorkflowID: "${OldWorkflowID}"
-            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+#       - run:
+#           name: Get old stack workflow id
+#           command: |
+#             cd .circleci/ansible
+#             cat OldWorkflowID.txt
+#             OldWorkflowID=$(cat OldWorkflowID.txt)
+#             echo OldWorkflowID: "${OldWorkflowID}"
+#             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"     
+#             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+#                     --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+#             echo Stack names: "${STACKS[@]}"     
             
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
-            then
-              echo "-----------------------------Delete Confirmed----------------------------------"
-              aws s3 rm s3://${CIRCLE_WORKFLOW_ID:0:7} --recursive
-              aws cloudformation delete-stack --stack-name "udacityproj3-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-              aws cloudformation delete-stack --stack-name "udacityproj3-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-            else
-              echo '-----------------------------Cannot Cleanup-------------------------------------'
-            fi
+#             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+#             then
+#               echo "-----------------------------Delete Confirmed----------------------------------"
+#               aws s3 rm s3://${CIRCLE_WORKFLOW_ID:0:7} --recursive
+#               aws cloudformation delete-stack --stack-name "udacityproj3-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+#               aws cloudformation delete-stack --stack-name "udacityproj3-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+#             else
+#               echo '-----------------------------Cannot Cleanup-------------------------------------'
+#             fi
             
 workflows:
   default:
@@ -496,5 +496,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+#       - cleanup:
+#           requires: [cloudfront-update]
