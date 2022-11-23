@@ -410,27 +410,25 @@ jobs:
             sudo ./aws/install   
             
       - run:
-          name: Update cloudfront distribution
+          name: Save Old Workflow ID to kvdb
           command: |
             export OldWorkflowID=$(aws cloudformation \
               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
               --no-paginate --output text)
-            echo $OldWorkflowID >> .circleci/ansible/OldWorkflowID.txt
-            cat .circleci/ansible/OldWorkflowID.txt
-            
-            
+            echo "Old Workflow ID: $OldWorkflowID"
+            curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OldWorkflowID}"
+      - run: 
+          name: Update Cloudfront Dist
+          command: |
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
-              --stack-name "u-${OldWorkflowID}" \
+              --stack-name InitialStack \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
             echo OldWorkflowID: "${OldWorkflowID}"
             echo Current Workflow Id: "${CIRCLE_WORKFLOW_ID:0:7}"
-            
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/OldWorkflowID.txt
+      - destroy-environment
+      - revert-migrations
 
 #   cleanup:
 #       docker:
